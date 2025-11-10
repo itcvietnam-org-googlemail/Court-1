@@ -1,1 +1,9 @@
-#
+*
+!data/
+!server/
+!source/src/
+!source/next.config.ts
+!source/next.dockerfile
+!source/package.json
+!source/tsconfig.json
+!.gitignore
