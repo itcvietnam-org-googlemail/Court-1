@@ -1,7 +1,10 @@
 *
-!data/*
-!server/*
-!source/src/*
+!data/
+!data/**
+!server/
+!server/**
+!source/src/
+!source/src/**
 !source/next.config.ts
 !source/next.dockerfile
 !source/package.json
