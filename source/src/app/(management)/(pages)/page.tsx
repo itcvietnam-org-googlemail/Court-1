@@ -3,24 +3,30 @@ import { createDirectus, rest, readItems } from '@directus/sdk';
 interface Article {
   id: string;
   title: string;
+  status: string;
 }
 
-interface Schema {
+interface Articles {
   articles: Article[];
 }
 
 export default async function Page() {
   const apiUrl = 'https://cuddly-trout-4jv547pr97v43qgx-8055.app.github.dev';
-  //const directus = createDirectus<Schema>(apiUrl).with(rest());
 
-  const client = createDirectus<Schema>(apiUrl).with(rest());
-  const result = await client.request(readItems('articles'));
-  const articles = result;
+  const client = createDirectus<Articles>(apiUrl).with(rest());
+  const articles = await client.request(readItems('articles', {
+    filter: {
+      status: {
+        _in: ['published', 'draft']
+      }
+    },
+    limit: 2
+  }));
 
   return (<div>
     <ul>
       {articles.map((article: Article) => (
-        <li key={article.id}>{article.title}</li>
+        <li key={article.id}>{article.title} ({article.status})</li>
       ))}
     </ul>
   </div>);
