@@ -7,7 +7,8 @@ import { storage } from '@/system/storage';
 import { login, logout } from './actions';
 import { cookie } from '@/system/cookie';
 import LikeButton from './button';
-import LoginForm from './login-form';
+import LoginButton from './login-button';
+import Category from './category';
 
 /*
 * Interfaces
@@ -33,7 +34,11 @@ export default async function Page({
             <hr />
             <LikeButton likes={12} token={token} />
             <hr />
-            <LoginForm />
+            <form>
+              <input type="text" name="email" defaultValue="manager@example.com" />
+              <input type="text" name="password" defaultValue="Manager@123" />
+              <LoginButton pendingText="Logining...">Login Button</LoginButton>
+          </form>
             <hr />
             <form action={logout}>
                 <button type="submit">Logout</button>

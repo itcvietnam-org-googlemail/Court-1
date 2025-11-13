@@ -7,6 +7,8 @@ import { storage } from '@/system/storage';
 import { LocalStorage } from '@/system/local-storage';
 import { cookie } from '@/system/cookie';
 import Link from 'next/link';
+import { useTranslation } from '@/system/translation';
+import { redirect } from 'next/navigation';
 
 interface Category {
   id: string;
@@ -35,21 +37,56 @@ interface ManySchema {
 }
 
 export default async function Page() {
+  const translation = await useTranslation();
 
   const apiUrl = 'https://cuddly-trout-4jv547pr97v43qgx-8055.app.github.dev';
 
   const query: Query<ManySchema, Article> = {
     limit: 20,
     offset: 0,
+    filter: {
+        status: {
+          _in: ['draft', 'published']
+        },
+        categories: {
+          categories_id: {
+            status: {
+              _in: ['published']
+            }
+          }
+        }
+      },
+      //search: 'art',
+      fields: [
+        '*',
+        {
+          categories: [
+            {
+              categories_id: ['*']
+            }
+          ]
+        }
+      ],
+      sort: ['-title'],
+      deep: {
+        categories: {
+          _limit: 10
+        }
+      }
   };
   
   const localStorage = new LocalStorage();
 
   const client = createDirectus<ManySchema>(apiUrl).with(rest()).with(authentication('json', {
-        credentials: 'include'
-    }));
+    credentials: 'include'
+  }));
 
     const token = (await cookies()).get("directus_session_token")?.value;
+    
+    if (!token) {
+      redirect('/login');
+    }
+    
     //const token = cookie.get('directus_session_token').toString();
     client.setToken(token ?? '');
   //client.setToken(storage.getItem('access_token'));
@@ -109,10 +146,11 @@ export default async function Page() {
   ///////
 
   return (<div>
+    <h4>{translation.title_have_contains_4_5}</h4>
     <ul>
       {articles.map((article) => (
         <li key={article.id}>
-          {article.title}
+          {translation.title}: {article.title}
           ({article.status})
           ({article.categories_count})
           |
