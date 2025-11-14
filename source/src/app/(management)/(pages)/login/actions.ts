@@ -59,8 +59,7 @@ export async function login(previousState: {message: string}, formData: FormData
 }
 
 export async function logout() {
-  const apiUrl = 'https://cuddly-trout-4jv547pr97v43qgx-8055.app.github.dev';
-    const directus = createDirectus(apiUrl).with(authentication('json', {
+  const directus = createDirectus(process.env.DATA_URL ?? '').with(authentication('json', {
         credentials: 'include'
     }));
 

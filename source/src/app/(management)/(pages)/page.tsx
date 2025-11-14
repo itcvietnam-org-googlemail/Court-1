@@ -1,6 +1,6 @@
 'use server';
 
-import { createDirectus, rest, readItems, createItem , Query, authentication } from '@directus/sdk';
+import { createDirectus, rest, readItems, readSingleton, createItem , Query, authentication } from '@directus/sdk';
 import { JSX } from 'react';
 import { cookies } from 'next/headers';
 import { storage } from '@/system/storage';
@@ -8,6 +8,7 @@ import { LocalStorage } from '@/system/local-storage';
 import { cookie } from '@/system/cookie';
 import Link from 'next/link';
 import { useTranslation } from '@/system/translation';
+import { translationHelperObject } from '@/system/translation-helper';
 import { redirect } from 'next/navigation';
 
 interface Category {
@@ -22,6 +23,7 @@ interface Article {
   title: string;
   status: string;
   categories: ArticleCategory[];
+  categories_count: number;
 }
 
 interface ArticleCategory {
@@ -36,10 +38,19 @@ interface ManySchema {
   articles_categories: ArticleCategory[];
 }
 
+interface Setting {
+  css: any;
+  code: string;
+}
+
 export default async function Page() {
   const translation = await useTranslation();
+  //const thelper = await translationHelper();
+  const { translate } = await translationHelperObject();
+  //const translationHelperObj = await translationHelperObject();
+  //console.log(translationHelperObj.translate('title'));
 
-  const apiUrl = 'https://cuddly-trout-4jv547pr97v43qgx-8055.app.github.dev';
+  const trans: string = 'a';
 
   const query: Query<ManySchema, Article> = {
     limit: 20,
@@ -77,11 +88,19 @@ export default async function Page() {
   
   const localStorage = new LocalStorage();
 
-  const client = createDirectus<ManySchema>(apiUrl).with(rest()).with(authentication('json', {
+  const cssClient = createDirectus<{settings: Setting}>(process.env.DATA_URL ?? '').with(rest());
+  const cssSetting = await cssClient.request(readSingleton('settings', {
+    fields: ['css', 'code']
+  }));
+
+  console.log(cssSetting.css);
+  console.log('===');
+
+  const client = createDirectus<ManySchema>(process.env.DATA_URL ?? '').with(rest()).with(authentication('json', {
     credentials: 'include'
   }));
 
-    const token = (await cookies()).get("directus_session_token")?.value;
+    const token = (await cookies()).get(process.env.COOKIE_NAME ?? '')?.value;
     
     if (!token) {
       redirect('/login');
@@ -124,11 +143,11 @@ export default async function Page() {
       }
     }));
 
-    console.log(articles);
+    //console.log(articles);
   //} catch (error) {}
 
   ///////
-  //const client = createDirectus(apiUrl).with(rest());
+  //const client = createDirectus(process.env.DATA_URL ?? '').with(rest());
   /*
   const result = await client.request(createItem('articles', {
     title: 'Article 4.6',
@@ -146,7 +165,13 @@ export default async function Page() {
   ///////
 
   return (<div>
-    <h4>{translation.title_have_contains_4_5}</h4>
+    <h4 style={cssSetting.css.headdingTitle}>{translation.title_have_contains_4_5}</h4>
+    <h5></h5>
+    <h6 style={cssSetting.css.headding.title}>{translate('title')}</h6>
+    <h6 style={cssSetting.css.hasNotStyle}>Trans: {translate('title_have_contains_4_5')}</h6>
+    <h6 style={cssSetting.css.hasNotStylesheet?.no}>Trans: {translate('title_have_contains_4_5')}</h6>
+    <h6>Trans: {translate('title')}</h6>
+    <h6>Trans: {translate('category')}</h6>
     <ul>
       {articles.map((article) => (
         <li key={article.id}>

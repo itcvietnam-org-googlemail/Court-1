@@ -9,6 +9,8 @@ import { cookie } from '@/system/cookie';
 import LikeButton from './button';
 import LoginButton from './login-button';
 import Category from './category';
+import { translationHelperObject } from '@/system/translation-helper';
+import Link from 'next/link';
 
 /*
 * Interfaces
@@ -25,12 +27,16 @@ export default async function Page({
 }) {
     const { id } = await params;
 
+    const { translate } = await translationHelperObject();
+
     const token = (await cookies()).get("directus_session_token")?.value;
     //const token = cookie.get('directus_session_token').toString();
 
     return (
         <section>
             <h1>LOGIN</h1>
+            <h5>Trans: {translate('title')}</h5>
+            <h5>Trans: {translate('category')}</h5>
             <hr />
             <LikeButton likes={12} token={token} />
             <hr />
@@ -43,6 +49,7 @@ export default async function Page({
             <form action={logout}>
                 <button type="submit">Logout</button>
             </form>
+            <Link href="/">Home Page</Link>
         </section>
     );
 }
