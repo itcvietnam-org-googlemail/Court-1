@@ -11,6 +11,7 @@ import LoginButton from './login-button';
 import Category from './category';
 import { translationHelperObject } from '@/system/translation-helper';
 import Link from 'next/link';
+import { setting } from '@/system/setting';
 
 /*
 * Interfaces
@@ -37,6 +38,8 @@ export default async function Page({
             <h1>LOGIN</h1>
             <h5>Trans: {translate('title')}</h5>
             <h5>Trans: {translate('category')}</h5>
+            <hr />
+            <p>Setting: {setting.project_name} ({setting.default_language})</p>
             <hr />
             <LikeButton likes={12} token={token} />
             <hr />
