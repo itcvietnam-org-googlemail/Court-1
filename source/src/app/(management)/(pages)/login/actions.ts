@@ -1,25 +1,23 @@
 'use server';
  
 import { cookies } from 'next/headers';
-import { createDirectus, rest, authentication } from '@directus/sdk';
+import { createDirectus, rest, authentication, staticToken, DirectusClient, RestClient, AuthenticationClient } from '@directus/sdk';
 import { cookie } from '@/system/cookie';
 import { redirect } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
- 
+import { auth } from '@/system/auth';
+import { createClient } from '@/system/client';
+
 export async function login(previousState: {message: string}, formData: FormData) {
-    const apiUrl = 'https://cuddly-trout-4jv547pr97v43qgx-8055.app.github.dev';
-    const directus = createDirectus(apiUrl).with(authentication('json', {
-        credentials: 'include'
-    }));
+   const directus = createClient(true);
 
-    //const token = directus.getToken();
-    //console.log(token);
-    //await directus.logout();
 
-    const token = (await cookies()).get("directus_session_token")?.value;
+    //const token = (await cookies()).get("directus_session_token")?.value;
     //const token = cookie.get('directus_session_token').toString();
+    const isAuth = await auth();
+    console.log(isAuth);
 
-    if (!token) {
+    if (!isAuth) {
         const email     = (formData.get('email') ?? 'manager@example.com') as string;
         const password  = (formData.get('password') ?? 'Manager@123') as string;
 
@@ -33,7 +31,7 @@ export async function login(previousState: {message: string}, formData: FormData
 
             //storage.setItem('access_token', response.access_token ?? '');
             if (response.access_token) {
-                (await cookies()).set('directus_session_token', response.access_token ?? '', { sameSite: 'strict', path: '/', secure: true });
+                //(await cookies()).set('directus_session_token', response.access_token ?? '', { sameSite: 'strict', path: '/', secure: true });
                 //cookie.set('directus_session_token', response.access_token ?? '');
 
                 loginSuccess = true;
@@ -59,9 +57,7 @@ export async function login(previousState: {message: string}, formData: FormData
 }
 
 export async function logout() {
-  const directus = createDirectus(process.env.DATA_URL ?? '').with(authentication('json', {
-        credentials: 'include'
-    }));
+  const directus = createClient(true);
 
     //const token = directus.getToken();
     //console.log(token);

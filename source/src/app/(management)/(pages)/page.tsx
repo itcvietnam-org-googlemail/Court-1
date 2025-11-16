@@ -1,6 +1,6 @@
 'use server';
 
-import { createDirectus, rest, readItems, readSingleton, createItem , Query, authentication } from '@directus/sdk';
+import { createDirectus, rest, readItems, readSingleton, readMe, createItem, DirectusClient, RestClient, AuthenticationClient, Query, authentication } from '@directus/sdk';
 import { JSX } from 'react';
 import { cookies } from 'next/headers';
 import { storage } from '@/system/storage';
@@ -10,6 +10,9 @@ import Link from 'next/link';
 import { useTranslation } from '@/system/translation';
 import { translationHelperObject } from '@/system/translation-helper';
 import { redirect } from 'next/navigation';
+import { t, trans } from '@/system/trans';
+import { auth } from '@/system/auth';
+import { createClient } from '@/system/client';
 
 interface Category {
   id: string;
@@ -50,8 +53,6 @@ export default async function Page() {
   //const translationHelperObj = await translationHelperObject();
   //console.log(translationHelperObj.translate('title'));
 
-  const trans: string = 'a';
-
   const query: Query<ManySchema, Article> = {
     limit: 20,
     offset: 0,
@@ -88,30 +89,23 @@ export default async function Page() {
   
   const localStorage = new LocalStorage();
 
-  const cssClient = createDirectus<{settings: Setting}>(process.env.DATA_URL ?? '').with(rest());
-  const cssSetting = await cssClient.request(readSingleton('settings', {
-    fields: ['css', 'code']
-  }));
-
-  console.log(cssSetting.css);
-  console.log('===');
-
-  const client = createDirectus<ManySchema>(process.env.DATA_URL ?? '').with(rest()).with(authentication('json', {
-    credentials: 'include'
-  }));
-
-    const token = (await cookies()).get(process.env.COOKIE_NAME ?? '')?.value;
-    
-    if (!token) {
-      redirect('/login');
-    }
-    
-    //const token = cookie.get('directus_session_token').toString();
-    client.setToken(token ?? '');
-  //client.setToken(storage.getItem('access_token'));
+  //const token = (await cookies()).get(process.env.COOKIE_NAME ?? '')?.value;
+  //const token = client.getToken();
   
-  //try {
-    const articles = await client.request(readItems('articles', {
+  const isAuth = await auth();
+  if (!isAuth) {
+    //redirect('/login');
+  }
+
+  ////////////////////////////////////////////////////////////
+  const at = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMwZjgxZmYzLWJlNzMtNGMyZi1iNjExLTI2ZTI0ODU2MTdkOSIsInJvbGUiOiI2NWY3YThlNC1lMzJjLTQxOWUtYjRiNS1iNGQzN2M3NTc5NTYiLCJhcHBfYWNjZXNzIjpmYWxzZSwiYWRtaW5fYWNjZXNzIjpmYWxzZSwiaWF0IjoxNzYzMjk5MzI4LCJleHAiOjE3NjMzMDAyMjgsImlzcyI6ImRpcmVjdHVzIn0.UCHKQNraU2eYXH-R827WFcNlKyyAJqYEbG4x0wI5BVc';
+  const rt = 'f2vkLV-ODA508AON7ciH89KZn28iIVOU-_HuAB5SWaez54IptYP2fuEl5V0KgODp';
+
+  const client = createClient<ManySchema>(true);
+
+  client.setToken(at);
+
+  const articles = await client.request(readItems('articles', {
       filter: {
         status: {
           _in: ['draft', 'published']
@@ -142,12 +136,20 @@ export default async function Page() {
         }
       }
     }));
+  ////////////////////////////////////////////////////////////
 
-    //console.log(articles);
-  //} catch (error) {}
+  const cssClient = createClient<{settings: Setting}>();
+  const cssSetting = await cssClient.request(readSingleton('settings', {
+    fields: ['css', 'code']
+  }));
 
-  ///////
-  //const client = createDirectus(process.env.DATA_URL ?? '').with(rest());
+  console.log(cssSetting.css);
+  console.log('===');
+    
+  //const token = cookie.get('directus_session_token').toString();
+  //client.setToken(token);
+  //client.setToken(storage.getItem('access_token'));
+
   /*
   const result = await client.request(createItem('articles', {
     title: 'Article 4.6',
@@ -162,7 +164,6 @@ export default async function Page() {
   }));
   console.log(result);
   */
-  ///////
 
   return (<div>
     <h4 style={cssSetting.css.headdingTitle}>{translation.title_have_contains_4_5}</h4>
@@ -170,8 +171,8 @@ export default async function Page() {
     <h6 style={cssSetting.css.headding.title}>{translate('title')}</h6>
     <h6 style={cssSetting.css.hasNotStyle}>Trans: {translate('title_have_contains_4_5')}</h6>
     <h6 style={cssSetting.css.hasNotStylesheet?.no}>Trans: {translate('title_have_contains_4_5')}</h6>
-    <h6>Trans: {translate('title')}</h6>
-    <h6>Trans: {translate('category')}</h6>
+    <h6>T: {t('title')}</h6>
+    <h6>Trans: {trans.t('title_have_contains_4_5')}</h6>
     <ul>
       {articles.map((article) => (
         <li key={article.id}>
@@ -192,5 +193,4 @@ export default async function Page() {
     </ul>
     <Link href="/login">Login Page</Link>
   </div>);
-  
 }

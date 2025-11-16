@@ -1,8 +1,12 @@
 'use client'
  
-import { useState } from 'react'
+import { useEffect, useState } from 'react';
  
-export default function LikeButton({ likes, token }: { likes: number; token?: string }) {
+export default function LikeButton({ likes, t, token }: { 
+    likes: number;
+    t?: (key: string, replacement?: Record<string, string | number>) => string;
+    token?: string;
+ }) {
     const [like, setLike] = useState(likes);
 
     const increment = () => {
