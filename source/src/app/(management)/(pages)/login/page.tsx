@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { setting } from '@/system/setting';
 import { t, trans } from '@/system/trans';
 import { auth } from '@/system/auth';
+import Box from '@mui/material/Box';
 
 /*
 * Export
@@ -24,6 +25,8 @@ export default async function Page({
   params: Promise<{ id: string }>
 }) {
     const { id } = await params;
+    const sxjson = '{"fontWeight": "bold", "color": "red", ":has(.Mui-expanded)": {"color": "green"}, "& span": {"color": "yellow"}, ":hover": {"color": "blue"}}';
+    const sx = JSON.parse(sxjson);
 
     return (
         <section>
@@ -40,12 +43,14 @@ export default async function Page({
             <form>
               <input type="text" name="email" defaultValue="manager@example.com" />
               <input type="text" name="password" defaultValue="Manager@123" />
-              <LoginButton pendingText="Logining...">Login Button</LoginButton>
+              <input type="text" name="title" />
+              <LoginButton pendingText="Logining..." fn={login}>Login Button</LoginButton>
             </form>
             <hr />
             <form action={logout}>
                 <button type="submit">Logout</button>
             </form>
+            <Box sx={sx}>BOX <span>SX</span> <b className="h">Bold</b></Box>
             <Link href="/">Home Page</Link>
         </section>
     );

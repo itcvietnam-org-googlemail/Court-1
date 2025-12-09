@@ -12,6 +12,8 @@ export async function login(previousState: {message: string}, formData: FormData
     const client = createClient(true);
     const user = await auth();
     
+    console.log(formData);
+
     if (!user) {
         const email     = (formData.get('email') ?? 'manager@example.com') as string;
         const password  = (formData.get('password') ?? 'Manager@123') as string;

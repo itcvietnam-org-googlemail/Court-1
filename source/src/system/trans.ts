@@ -11,7 +11,7 @@ export const trans = await (async (): Promise<{
     l(): string
 }> => {
     const client = createClient();
-    const translations = await client.request(readTranslations({
+    let translations = await client.request(readTranslations({
         filter: {
             language: {
                 _eq: 'en-GB'
@@ -20,16 +20,20 @@ export const trans = await (async (): Promise<{
         fields: ['key', 'value']
     }));
 
-    const translation = translations.reduce((accumulator, item) => {
-        return {
-            ...accumulator,
-            [item.key]: item.value
-        };
-    }, {}) as Record<string, string>;
+    let translation:Record<string, string> = {};
+
+    if (translations.length === 0) {
+        translation = translations?.reduce((accumulator, item) => {
+            return {
+                ...accumulator,
+                [item.key]: item.value
+            };
+        }, {}) as Record<string, string>;
+    }
 
     return {
         t: (key: string, replacement?: Record<string, string | number>): string => {
-            return translation[key] ?? key;
+            return translation?.[key] ?? key;
         },
         l: (): string => {
             return 'en-GB';
