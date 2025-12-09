@@ -48,10 +48,8 @@ interface Setting {
 
 export default async function Page() {
   const translation = await useTranslation();
-  //const thelper = await translationHelper();
   const { translate } = await translationHelperObject();
-  //const translationHelperObj = await translationHelperObject();
-  //console.log(translationHelperObj.translate('title'));
+  const user = await auth();
 
   const query: Query<ManySchema, Article> = {
     limit: 20,
@@ -86,70 +84,46 @@ export default async function Page() {
         }
       }
   };
-  
-  const localStorage = new LocalStorage();
-
-  //const token = (await cookies()).get(process.env.COOKIE_NAME ?? '')?.value;
-  //const token = client.getToken();
-  
-  const isAuth = await auth();
-  if (!isAuth) {
-    //redirect('/login');
-  }
-
-  ////////////////////////////////////////////////////////////
-  const at = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMwZjgxZmYzLWJlNzMtNGMyZi1iNjExLTI2ZTI0ODU2MTdkOSIsInJvbGUiOiI2NWY3YThlNC1lMzJjLTQxOWUtYjRiNS1iNGQzN2M3NTc5NTYiLCJhcHBfYWNjZXNzIjpmYWxzZSwiYWRtaW5fYWNjZXNzIjpmYWxzZSwiaWF0IjoxNzYzMjk5MzI4LCJleHAiOjE3NjMzMDAyMjgsImlzcyI6ImRpcmVjdHVzIn0.UCHKQNraU2eYXH-R827WFcNlKyyAJqYEbG4x0wI5BVc';
-  const rt = 'f2vkLV-ODA508AON7ciH89KZn28iIVOU-_HuAB5SWaez54IptYP2fuEl5V0KgODp';
 
   const client = createClient<ManySchema>(true);
 
-  client.setToken(at);
-
   const articles = await client.request(readItems('articles', {
-      filter: {
-        status: {
-          _in: ['draft', 'published']
-        },
-        categories: {
-          categories_id: {
-            status: {
-              _in: ['published']
-            }
+    filter: {
+      status: {
+        _in: ['draft', 'published']
+      },
+      categories: {
+        categories_id: {
+          status: {
+            _in: ['published']
           }
         }
-      },
-      //search: 'art',
-      fields: [
-        '*',
-        {
-          categories: [
-            {
-              categories_id: ['*']
-            }
-          ]
-        }
-      ],
-      sort: ['-title'],
-      deep: {
-        categories: {
-          _limit: 10
-        }
       }
-    }));
-  ////////////////////////////////////////////////////////////
-
+    },
+    //search: 'art',
+    fields: [
+      '*',
+      {
+        categories: [
+          {
+            categories_id: ['*']
+          }
+        ]
+      }
+    ],
+    sort: ['-title'],
+    deep: {
+      categories: {
+        _limit: 10
+      }
+    }
+  }));
+  
   const cssClient = createClient<{settings: Setting}>();
   const cssSetting = await cssClient.request(readSingleton('settings', {
     fields: ['css', 'code']
   }));
-
-  console.log(cssSetting.css);
-  console.log('===');
-    
-  //const token = cookie.get('directus_session_token').toString();
-  //client.setToken(token);
-  //client.setToken(storage.getItem('access_token'));
-
+  
   /*
   const result = await client.request(createItem('articles', {
     title: 'Article 4.6',
@@ -162,12 +136,20 @@ export default async function Page() {
       }
     ]
   }));
+
   console.log(result);
   */
 
   return (<div>
     <h4 style={cssSetting.css.headdingTitle}>{translation.title_have_contains_4_5}</h4>
-    <h5></h5>
+    <hr />
+    { user ? (
+      <div>
+        <h5>User auth (ID): { user.id }</h5>
+        <h5>User auth (*): { user.email }</h5>
+      </div>
+    ) : '' }
+    <hr />
     <h6 style={cssSetting.css.headding.title}>{translate('title')}</h6>
     <h6 style={cssSetting.css.hasNotStyle}>Trans: {translate('title_have_contains_4_5')}</h6>
     <h6 style={cssSetting.css.hasNotStylesheet?.no}>Trans: {translate('title_have_contains_4_5')}</h6>

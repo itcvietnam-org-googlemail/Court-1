@@ -1,4 +1,5 @@
-import { createDirectus, rest, DirectusClient, RestClient, AuthenticationClient, AuthenticationStorage, authentication } from '@directus/sdk';
+import { createDirectus, rest, DirectusClient, RestClient, AuthenticationClient, AuthenticationStorage, authentication, AuthenticationData } from '@directus/sdk';
+import { cookies } from 'next/headers';
 
 export function createClient<T extends object>(): DirectusClient<T> & RestClient<T>;
 
@@ -9,11 +10,35 @@ export function createClient<T extends object>(auth?: boolean): DirectusClient<T
 
     if (auth) {
         const directus = createDirectus<T>(url).with(rest()).with(authentication(
-            'json',
+            'cookie',
             {
-                credentials: 'include'
+                credentials: 'include',
+                storage: new (class implements AuthenticationStorage {
+                    async set(data: AuthenticationData | null) {
+                        (await cookies()).set(
+                            process.env.COOKIE_NAME ?? 'directus_session_token',
+                            JSON.stringify(data),
+                            {
+                                sameSite: 'strict',
+                                secure: true,
+                                httpOnly: true
+                            }
+                        );
+                    }
+
+                    async get() {
+                        const result = (await cookies()).get(process.env.COOKIE_NAME ?? 'directus_session_token')?.value.toString();
+                        
+                        if (result) {
+                            return JSON.parse(result);
+                        }
+
+                        return null;
+                    }
+                })()
             }
         ));
+        
         return directus;
     }
 

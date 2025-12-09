@@ -16,11 +16,6 @@ import { t, trans } from '@/system/trans';
 import { auth } from '@/system/auth';
 
 /*
-* Interfaces
-* Functions
-*/
-
-/*
 * Export
 */
 export default async function Page({
@@ -30,22 +25,13 @@ export default async function Page({
 }) {
     const { id } = await params;
 
-    const { translate } = await translationHelperObject();
-
-    //const token = (await cookies()).get("directus_session_token")?.value;
-    //const token = cookie.get('directus_session_token').toString();
-    const isAuth = await auth();
-    //console.log(isAuth);
-
     return (
         <section>
             <h1>LOGIN</h1>
+            <hr />
             <h4>T: { t('title') }</h4>
             <h4>T: { t('title_none') }</h4>
             <h4>T: { t('category') } - Trans: { trans.t('title') } - Trans locale: { trans.l() }</h4>
-            <hr />
-            <h5>Trans: {translate('title')}</h5>
-            <h5>Trans: {translate('category')}</h5>
             <hr />
             <p>Setting: {setting.project_name} ({setting.default_language})</p>
             <hr />
@@ -55,7 +41,7 @@ export default async function Page({
               <input type="text" name="email" defaultValue="manager@example.com" />
               <input type="text" name="password" defaultValue="Manager@123" />
               <LoginButton pendingText="Logining...">Login Button</LoginButton>
-          </form>
+            </form>
             <hr />
             <form action={logout}>
                 <button type="submit">Logout</button>
