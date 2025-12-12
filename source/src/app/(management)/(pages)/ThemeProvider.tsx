@@ -8,6 +8,11 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 
 export default function MuiThemeProvider({ children }: { children: React.ReactNode }) {
     const theme = createTheme({
+        palette: {
+            darker: {
+                main: 'red'
+            }
+        },
         components: {
             MuiButton: {
                 styleOverrides: {
