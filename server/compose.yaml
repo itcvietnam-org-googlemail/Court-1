@@ -29,7 +29,7 @@ services:
 
     directus:
         container_name: court-1-directus
-        image: directus/directus:11.13.1
+        image: directus/directus:11.14.0
         ports:
             - 8055:8055
         depends_on:
@@ -43,9 +43,10 @@ services:
         environment:
             KEY: "KEY-ABC-XYZ-123-END"
             SECRET: "SECRET-ABC-XYZ-123-END"
-            PUBLIC_URL: "http://localhost:8055"
+            PUBLIC_URL: "https://cuddly-trout-4jv547pr97v43qgx-8055.app.github.dev"
             ADMIN_EMAIL: "admin@example.com"
             ADMIN_PASSWORD: "Court-1.Admin@123"
+            WEBSOCKETS_ENABLED: true
             DB_CLIENT: "mysql"
             DB_HOST: "mysql"
             DB_PORT: 3306
@@ -62,6 +63,11 @@ services:
         build:
             context: ../source
             dockerfile: next.dockerfile
+            args:
+                DATA_URL: https://cuddly-trout-4jv547pr97v43qgx-8055.app.github.dev
+                DATA_NAME: Directus
+                COOKIE_NAME: court_session_token
+                NEXT_PUBLIC_DATA_URL: https://cuddly-trout-4jv547pr97v43qgx-8055.app.github.dev
         ports:
             - 3000:3000
         depends_on:

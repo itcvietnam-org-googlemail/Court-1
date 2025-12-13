@@ -1,9 +1,19 @@
 FROM node:24-alpine
 WORKDIR /next
 COPY src ./src
-COPY package.json ./
-COPY tsconfig.json ./
-COPY next.config.ts ./
+COPY package.json .
+COPY tsconfig.json .
+COPY mui.d.ts .
+COPY next.config.ts .
+ARG DATA_URL
+ENV DATA_URL=${DATA_URL}
+ARG DATA_NAME
+ENV DATA_NAME=${DATA_NAME}
+ARG COOKIE_NAME
+ENV COOKIE_NAME=${COOKIE_NAME}
+ARG NEXT_PUBLIC_DATA_URL
+ENV NEXT_PUBLIC_DATA_URL=${NEXT_PUBLIC_DATA_URL}
+ENV NODE_ENV=production
 RUN npm install
 RUN npm run build
 CMD npm run start
