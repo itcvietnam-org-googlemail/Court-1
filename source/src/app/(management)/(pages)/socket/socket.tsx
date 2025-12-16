@@ -23,10 +23,10 @@ export default function Socket({
         const setup = (async () => {
             const connect = await client.connect();
 
-            const { subscription } = await client.subscribe(
+            const { subscription, unsubscribe } = await client.subscribe(
                 'tasks',
                 {
-                event: 'create',
+                //event: 'create',//Bỏ qua để lắng nghe hết create, update, delete
                 query: {
                     fields: ['id', 'name', 'message']
                 }
@@ -39,6 +39,8 @@ export default function Socket({
                     console.log(item);
                 }
             }
+
+            //unsubscribe();
         })();
     }, []);
 

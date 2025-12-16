@@ -1,5 +1,5 @@
-import { resolveResult } from './result';
-import type { Result } from './result';
+import { resolveResult } from './action';
+import { ensureError } from './utility';
 
 interface Task {
     id: string;
@@ -7,12 +7,30 @@ interface Task {
     description: string;
 }
 
-export function readTodoTasks(): Result<Task[]> {
-    const tasks: Task[] = [{
-        id: 'ID-1',
-        title: 'TITLE-1',
-        description: 'DESCRIPTION-1'
-    }];
+export async function readTodoTasks(): Promise<Task[]> {
+    try {
+        const tasks: Task[] = [{
+            id: 'ID-1',
+            title: 'TITLE-1',
+            description: 'DESCRIPTION-1'
+        }];
 
-    return resolveResult(tasks);
+        return tasks;
+    } catch (error) {
+        return [];
+    }
+}
+
+export async function createTask(): Promise<Task | Error> {
+    try {
+        const task: Task = {
+            id: 'ID-1',
+            title: 'TITLE-1',
+            description: 'DESCRIPTION-1'
+        };
+        
+        return task;
+    } catch (error) {
+        return ensureError(error);
+    }
 }
