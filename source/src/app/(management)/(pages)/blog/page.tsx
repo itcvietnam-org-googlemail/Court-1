@@ -2,7 +2,6 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
-import { bgcolor } from '@mui/system';
 import Font from './font';
 
 export default function Page() {

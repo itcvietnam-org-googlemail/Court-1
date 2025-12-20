@@ -1,11 +1,5 @@
-'use client';
-
-import { createTheme } from '@mui/material/styles';
-
-export const theme = createTheme({
+export const theme = {
     cssVariables: true,
-
-    //unstable_sxConfig: {},
 
     style: {
         menu: {
@@ -157,4 +151,4 @@ export const theme = createTheme({
             },
         },
     },
-});
+};

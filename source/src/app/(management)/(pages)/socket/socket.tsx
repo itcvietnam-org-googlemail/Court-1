@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { client } from './client';
+import { randomInt } from 'crypto';
 
 export default function Socket({
     initialTasks = [{
@@ -33,14 +34,14 @@ export default function Socket({
             });
 
             for await (const item of subscription) {
-                if (item.type === 'subscription' && item.event === 'create') {
+                if (item.type === 'subscription' && (item.event === 'create' || item.event === 'update')) {
                     setTasks(previousTasks => [...previousTasks, item.data[0]]);
                     
                     console.log(item);
                 }
             }
 
-            //unsubscribe();
+            unsubscribe();
         })();
     }, []);
 
