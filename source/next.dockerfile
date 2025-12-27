@@ -1,4 +1,5 @@
-FROM node:24-alpine
+#Build
+FROM node:24-alpine AS build
 WORKDIR /next
 COPY src ./src
 COPY package.json .
@@ -17,7 +18,27 @@ ARG COOKIE_SIDEBAR_EXPANDED
 ENV COOKIE_SIDEBAR_EXPANDED=${COOKIE_SIDEBAR_EXPANDED}
 ARG NEXT_PUBLIC_DATA_URL
 ENV NEXT_PUBLIC_DATA_URL=${NEXT_PUBLIC_DATA_URL}
-ENV NODE_ENV=production
 RUN npm install
 RUN npm run build
-CMD npm run start
+
+#Start
+FROM node:24-alpine AS start
+WORKDIR /next
+RUN addgroup --system --gid 1001 next
+RUN adduser --system --uid 1001 next
+USER next
+COPY --from=build --chown=next:next /next/build/standalone ./
+COPY --from=build --chown=next:next /next/build/static ./build/static
+ARG SECRET_KEY
+ENV SECRET_KEY=${SECRET_KEY}
+ARG DATA_URL
+ENV DATA_URL=${DATA_URL}
+ARG COOKIE_ACCESS_TOKEN
+ENV COOKIE_ACCESS_TOKEN=${COOKIE_ACCESS_TOKEN}
+ARG COOKIE_LANGUAGE_LOCALE
+ENV COOKIE_LANGUAGE_LOCALE=${COOKIE_LANGUAGE_LOCALE}
+ARG COOKIE_SIDEBAR_EXPANDED
+ENV COOKIE_SIDEBAR_EXPANDED=${COOKIE_SIDEBAR_EXPANDED}
+ARG NEXT_PUBLIC_DATA_URL
+ENV NEXT_PUBLIC_DATA_URL=${NEXT_PUBLIC_DATA_URL}
+CMD ["node", "server.js"]

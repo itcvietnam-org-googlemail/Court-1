@@ -68,7 +68,7 @@ services:
             dockerfile: next.dockerfile
             args:
                 SECRET_KEY: "SECRET-ABC-XYZ-123-ENCRYPTION"
-                DATA_URL: *PUBLIC_URL
+                DATA_URL: "http://directus:8055"
                 COOKIE_ACCESS_TOKEN: "court_access_token"
                 COOKIE_LANGUAGE_LOCALE: "court_language_locale"
                 COOKIE_SIDEBAR_EXPANDED: "court_sidebar_expanded"
