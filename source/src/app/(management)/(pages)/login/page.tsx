@@ -1,19 +1,11 @@
 /*
 * Import
 */
-import { cookies } from 'next/headers';
-import { createDirectus, rest, authentication, DirectusClient } from '@directus/sdk';
-import { storage } from '@/system/storage';
 import { login, logout } from './actions';
-import { cookie } from '@/system/cookie';
 import LikeButton from './button';
 import LoginButton from './login-button';
-import Category from './category';
-import { translationHelperObject } from '@/system/translation-helper';
 import Link from 'next/link';
 import { setting } from '@/system/setting';
-import { t, trans } from '@/system/trans';
-import { auth } from '@/system/auth';
 import Box from '@mui/material/Box';
 
 /*
@@ -24,6 +16,14 @@ export default async function Page({
 }: {
   params: Promise<{ id: string }>
 }) {
+    const data = { id: 1, name: "Directus/Ping", type: "Quản trị lương", options: {id: 1, name: "Directus", type: "Admin"} };
+    const string = JSON.stringify(data);
+    const encoded = Buffer.from(string).toString('base64');
+    console.log(encoded);
+    const decoded = Buffer.from(encoded, 'base64').toString('utf8');
+    console.log(decoded);
+    //Nho replace 3 ky tu dat biet trong chuoi base64 la: + / = (dau = co the bo vi khong can de giai ma)
+
     const { id } = await params;
     const sxjson = '{"fontWeight": "bold", "color": "red", ":has(.Mui-expanded)": {"color": "green"}, "& span": {"color": "yellow"}, ":hover": {"color": "blue"}}';
     const sx = JSON.parse(sxjson);
@@ -31,11 +31,6 @@ export default async function Page({
     return (
         <section>
             <h1>LOGIN</h1>
-            <hr />
-            <h4>T: { t('title') }</h4>
-            <h4>T: { t('title_none') }</h4>
-            <h4>T: { t('category') } - Trans: { trans.t('title') } - Trans locale: { trans.l() }</h4>
-            <hr />
             <p>Setting: {setting.project_name} ({setting.default_language})</p>
             <hr />
             <LikeButton likes={12} />

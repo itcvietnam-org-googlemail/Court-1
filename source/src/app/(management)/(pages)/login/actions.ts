@@ -11,8 +11,6 @@ import { createClient } from '@/system/client';
 export async function login(previousState: {message: string}, formData: FormData) {
     const client = createClient(true);
     const user = await auth();
-    
-    console.log(formData);
 
     if (!user) {
         const email     = (formData.get('email') ?? 'manager@example.com') as string;
@@ -48,7 +46,7 @@ export async function logout() {
 
     try {
       (await cookies()).delete(
-        process.env.COOKIE_NAME ?? 'directus_session_token'
+        process.env.COOKIE_ACCESS_TOKEN ?? 'directus_session_token'
       );
 
       await client.logout();

@@ -11,7 +11,7 @@ if (!Object.keys(trans).length) {
 
     const translationHelper = async function translationHelper(): Promise<Record<string, string>> {
         const apiUrl = 'https://cuddly-trout-4jv547pr97v43qgx-8055.app.github.dev';
-
+        
         const client = createDirectus<{directus_translations: Translation[]}>(process.env.DATA_URL ?? '').with(rest());
 
         /*

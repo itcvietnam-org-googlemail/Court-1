@@ -7,7 +7,7 @@ export function createClient<T extends object>(auth: boolean): DirectusClient<T>
 
 export function createClient<T extends object>(auth?: boolean): DirectusClient<T> & RestClient<T> | DirectusClient<T> & RestClient<T> & AuthenticationClient<T> {
     const url = process.env.DATA_URL ?? 'http://localhost:8055';
-
+console.log(url);
     if (auth) {
         const directus = createDirectus<T>(url).with(rest()).with(authentication(
             'cookie',
@@ -16,10 +16,10 @@ export function createClient<T extends object>(auth?: boolean): DirectusClient<T
                 storage: new (class implements AuthenticationStorage {
                     async set(data: AuthenticationData | null) {
                         (await cookies()).set(
-                            process.env.COOKIE_NAME ?? 'directus_session_token',
+                            process.env.COOKIE_ACCESS_TOKEN ?? 'directus_session_token',
                             JSON.stringify(data),
                             {
-                                sameSite: 'strict',
+                                sameSite: 'lax',
                                 secure: true,
                                 httpOnly: true
                             }
@@ -27,7 +27,7 @@ export function createClient<T extends object>(auth?: boolean): DirectusClient<T
                     }
 
                     async get() {
-                        const result = (await cookies()).get(process.env.COOKIE_NAME ?? 'directus_session_token')?.value.toString();
+                        const result = (await cookies()).get(process.env.COOKIE_ACCESS_TOKEN ?? 'directus_session_token')?.value.toString();
                         
                         if (result) {
                             return JSON.parse(result);
