@@ -1,6 +1,6 @@
 'use server';
  
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { createDirectus, rest, authentication, staticToken, DirectusClient, RestClient, AuthenticationClient } from '@directus/sdk';
 import { cookie } from '@/system/cookie';
 import { redirect } from 'next/navigation';
@@ -11,6 +11,8 @@ import { createClient } from '@/system/client';
 export async function login(previousState: {message: string}, formData: FormData) {
     const client = createClient(true);
     const user = await auth();
+    
+    console.log((await headers()).get('x-app'));
 
     if (!user) {
         const email     = (formData.get('email') ?? 'manager@example.com') as string;

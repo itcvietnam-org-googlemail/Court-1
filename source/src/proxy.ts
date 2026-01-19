@@ -6,6 +6,10 @@ import { auth } from '@/system/auth';
 
 //Export(s)
 export async function proxy(request: NextRequest) {
+    const headers = new Headers(request.headers);
+
+    headers.set('x-app', 'court.management');
+    
     for (const asyncProxy of config.asyncProxies) {
         const asyncProxyResponse = await asyncProxy(request);
 
@@ -14,7 +18,11 @@ export async function proxy(request: NextRequest) {
         }
     }
 
-    return NextResponse.next();
+    return NextResponse.next({
+        request: {
+            headers: headers
+        }
+    });
 }
 
 /*
