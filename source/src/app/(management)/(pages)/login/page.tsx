@@ -1,6 +1,7 @@
 /*
 * Import
 */
+import { headers } from 'next/headers';
 import { login, logout } from './actions';
 import LikeButton from './button';
 import LoginButton from './login-button';
@@ -23,6 +24,7 @@ export default async function Page({
     const decoded = Buffer.from(encoded, 'base64').toString('utf8');
     console.log(decoded);
     //Nho replace 3 ky tu dat biet trong chuoi base64 la: + / = (dau = co the bo vi khong can de giai ma)
+    console.log((await headers()).get('x-app') + '-page');
 
     const { id } = await params;
     const sxjson = '{"fontWeight": "bold", "color": "red", ":has(.Mui-expanded)": {"color": "green"}, "& span": {"color": "yellow"}, ":hover": {"color": "blue"}}';
