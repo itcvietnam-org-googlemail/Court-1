@@ -1,4 +1,5 @@
 import Box from '@mui/material/Box';
+import CssBaseline from '@mui/material/CssBaseline';
 import Theme from './theme';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';

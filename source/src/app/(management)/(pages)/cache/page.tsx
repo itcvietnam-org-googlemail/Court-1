@@ -7,6 +7,7 @@ import Scrollbar from './scrollbar';
 import { randomInt } from 'crypto';
 import { cookies, headers } from 'next/headers';
 import ExcelJS from 'exceljs';
+import { config } from '../../config';
 
 async function get(token?: boolean): Promise<string> {
     if (token) {
@@ -29,18 +30,18 @@ export default async function Page() {
     worksheet.columns = [
         { header: 'ID', key: 'id', width: 10 },
         { header: 'Họ Tên', key: 'name', width: 32 },
-        { header: 'Email', key: 'email', width: 32 },
+        { header: 'Email', key: 'email', width: 32 }
     ];
     
     //Return
     return (
-        <div>
-            <h1>Page::Cache</h1>
-            <p>{result}</p>
+        <Box>
+            <Box component="h1">Page::Cache</Box>
+            <Box component="p">{result}</Box>
             <Box sx={{
-                width: '280px',
-                height: '100vh',
-                bgcolor: '#f5f5f5'
+                width: 'var(--mui-sidebar-width)',
+                height: 'var(--mui-sidebar-height)',
+                bgcolor: 'secondary.main'
             }}>
                 <Scrollbar>
                     <List>
@@ -54,6 +55,6 @@ export default async function Page() {
                     </List>
                 </Scrollbar>
             </Box>
-        </div>
+        </Box>
     );
 }

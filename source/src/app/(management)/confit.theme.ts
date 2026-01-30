@@ -1,6 +1,5 @@
 export const theme = {
-    cssVariables: true,
-
+    cssVariables: false,
     style: {
         menu: {
             color: 'blue',
@@ -32,6 +31,15 @@ export const theme = {
         }
     },
     components: {
+        MuiCssBaseline: {
+            styleOverrides: {
+                ':root': {
+                    '--mui-sidebar-width': '280px',
+                    '--mui-sidebar-height': '100vh',
+                    '--mui-header-height': '70px'
+                }
+            }
+        },
         MuiBox: {
             styleOverrides: {
                 root: {
