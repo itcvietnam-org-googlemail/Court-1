@@ -2,12 +2,17 @@
 * Import
 */
 import { headers } from 'next/headers';
-import { login, logout } from './actions';
+import { login, logout, placeholder } from './actions';
 import LikeButton from './button';
 import LoginButton from './login-button';
 import Link from 'next/link';
 import { setting } from '@/system/setting';
+import TextField from '@mui/material/TextField';
+import TextInput from './textinput';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Form from 'next/form';
+import FormClient from './form';
 
 /*
 * Export
@@ -24,7 +29,7 @@ export default async function Page({
     const decoded = Buffer.from(encoded, 'base64').toString('utf8');
     console.log(decoded);
     //Nho replace 3 ky tu dat biet trong chuoi base64 la: + / = (dau = co the bo vi khong can de giai ma)
-    console.log((await headers()).get('x-app') + '-page');
+    //console.log((await headers()).get('x-app') + '-page');
 
     const { id } = await params;
     const sxjson = '{"fontWeight": "bold", "color": "red", ":has(.Mui-expanded)": {"color": "green"}, "& span": {"color": "yellow"}, ":hover": {"color": "blue"}}';
@@ -37,18 +42,23 @@ export default async function Page({
             <hr />
             <LikeButton likes={12} />
             <hr />
-            <form>
-              <input type="text" name="email" defaultValue="manager@example.com" />
-              <input type="text" name="password" defaultValue="Manager@123" />
-              <input type="text" name="title" />
+            <Form action={placeholder}>
+              <TextField name="email" defaultValue="manager@example.com" />
+              <TextField name="password" defaultValue="Manager@123" />
+              <TextField name="title" key="key-title" />
+              <TextInput name="text" placeholder="Text input" />
               <LoginButton pendingText="Logining..." fn={login}>Login Button</LoginButton>
-            </form>
+            </Form>
             <hr />
             <form action={logout}>
                 <button type="submit">Logout</button>
             </form>
             <Box sx={sx}>BOX <span>SX</span> <b className="h">Bold</b></Box>
             <Link href="/">Home Page</Link>
+
+            <hr />
+
+            <FormClient data={{}} />
         </section>
     );
 }

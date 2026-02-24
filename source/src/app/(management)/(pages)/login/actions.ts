@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/system/auth';
 import { createClient } from '@/system/client';
 
-export async function login(previousState: {message: string}, formData: FormData) {
+export async function login(previousState: any, formData: FormData): Promise<any> {
     const client = createClient(true);
     const user = await auth();
     
@@ -40,7 +40,7 @@ export async function login(previousState: {message: string}, formData: FormData
         }
     }
 
-    return {message: 'ERROR LOGIN!'};
+    return {message: 'ERROR LOGIN!', data: Object.fromEntries(formData.entries())};
 }
 
 export async function logout() {
@@ -54,3 +54,5 @@ export async function logout() {
       await client.logout();
     } catch (error) {}
 }
+
+export async function placeholder(formData: FormData) {}

@@ -1,13 +1,22 @@
 'use client'
  
-import React, { useActionState, startTransition, useState, useEffect } from 'react';
+import React, { useActionState, startTransition, useState, useEffect, useRef } from 'react';
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import Button from '@mui/material/Button';
  
-export default function LoginButton({expanded, children, pendingText, fn}: 
-  {expanded?: boolean, children?: string; pendingText?: string, fn: any}) {
-  const [state, action, pending] = useActionState(fn, {message: ''});
+export default function LoginButton({expanded, children, pendingText, fn, onActionState}: 
+  {expanded?: boolean, children?: string; pendingText?: string, fn: any, onActionState?: any}) {
+
+    const wrappedFn = async (prevState: any, formData: FormData) => {
+      const result = await fn(prevState, formData);
+
+      if (onActionState) onActionState(result);
+
+      return result;
+    };
+
+  const [state, action, pending] = useActionState(wrappedFn, {message: '', data: {}});
 
   useEffect(() => {
     if (state.message) {
