@@ -7,6 +7,8 @@ import { redirect } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/system/auth';
 import { createClient } from '@/system/client';
+import { getFormStore } from './store';
+import { refresh, revalidatePath } from 'next/cache';
 
 export async function login(previousState: any, formData: FormData): Promise<any> {
     const client = createClient(true);
@@ -41,6 +43,31 @@ export async function login(previousState: any, formData: FormData): Promise<any
     }
 
     return {message: 'ERROR LOGIN!', data: Object.fromEntries(formData.entries())};
+}
+
+export async function sigin(formData: FormData): Promise<any> {
+    const client = createClient(true);
+    
+    if (formData) {
+        const email     = (formData.get('email') ?? 'signin@example.com') as string;
+        const password  = (formData.get('password') ?? 'Sigin@123') as string;
+
+        let loginSuccess = false;
+
+        try {
+            if (email === 'email@example.com') {
+                loginSuccess = true;
+            }
+        } catch (error) {
+            console.error(error);
+        }
+
+        if (loginSuccess) {
+          redirect('/');
+        }
+    }
+    
+    return {message: 'ERROR SIGIN!', data: Object.fromEntries(formData.entries())};
 }
 
 export async function logout() {

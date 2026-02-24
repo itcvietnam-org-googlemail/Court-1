@@ -32,7 +32,7 @@ export default function FormClient({
                 pendingText="Submitting..."
                 fn={login}
                 onActionState={setActionState}
-              >Submit Button</LoginButton>
+              >Submit Client Form</LoginButton>
             </Form>
         </section>
     );
